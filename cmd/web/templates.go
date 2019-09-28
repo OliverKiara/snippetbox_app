@@ -6,6 +6,7 @@ import(
 	 "path/filepath"
 )
 type templateData struct{
+	CurrentYear int
 	Snippet *models.Snippet
 	Snippets []*models.Snippet
 }
