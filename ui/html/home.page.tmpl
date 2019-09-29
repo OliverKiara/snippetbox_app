@@ -11,7 +11,7 @@
 		<th>Created</th>
 		<th>ID</th>
 	</tr>
-	{{range .Snippets}}
+	 {{range .Snippets}}
 	<tr>
 		<td><a href='/snippet/{{.ID}}'>{{.Title}}</a></td>
 		 <td>{{humanDate .Created}}</td>
@@ -20,6 +20,6 @@
 	{{end}}
 </table>
 {{else}}
-<p>There is nothing to see yet</p>
+     <p>There is nothing to see yet</p>
 {{end}}
 {{end}}
