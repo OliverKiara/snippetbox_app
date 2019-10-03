@@ -5,6 +5,8 @@ import (
 
 	"net/http"
 	"strconv"
+	"strings"
+	"unicode/utf8"
 
 	"alexedwards.net/snippetbox/pkg/models"
 )
@@ -26,10 +28,41 @@ func (app *application)createSnippetForm(w http.ResponseWriter, r *http.Request)
 	app.render(w, r, "create.page.tmpl", nil)
 }
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
+
+	err := r.ParseForm()
+	if err != nil{
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
 	
-	title := "O snail"
-	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
-	expires := "7"
+	title := r.PostForm.Get("title")
+	content := r.PostForm.Get("content")
+	expires :=r.PostForm.Get("expires")
+
+	errors := make(map[string]string)
+
+	if strings.TrimSpace(title) == "" {
+		errors["title"]="This field cannot be blank"
+	}else if utf8.RuneCountInString(title) > 100 {
+		errors["title"]= "The field is too long(maximum character is 100)"
+	}
+
+	if strings.TrimSpace(content)== ""{
+		errors["content"] = "This field cannot be blank"
+	}
+
+	if strings.TrimSpace(expires)==""{
+		errors["expires"]="This field cannot be blank"
+	}else if expires != "365" && expires != "7" && expires != "1"{
+		errors["expires"]= "This field is invalid"
+	}
+	if len(errors)>0 {
+		app.render(w, r, "create.page.tmpl", &templateData{
+			FormErrors: errors,
+			FormData: r.PostForm,
+		})
+		return
+	}
 
 	id, err := app.snippets.Insert(title, content, expires)
 	if err != nil {
