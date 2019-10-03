@@ -26,6 +26,7 @@ http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusIntern
 				 td = &templateData{}
 			 }
 			 td.CurrentYear = time.Now().Year()
+			 td.Flash = app.session.PopString(r, "flash") 
 			 return td
 		 }
 
