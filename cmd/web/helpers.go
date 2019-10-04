@@ -6,6 +6,7 @@ import(
 	"net/http"
 	"runtime/debug"
 	"time"
+	"github.com/justinas/nosurf"
 )
 func (app *application) serverError(w http.ResponseWriter, err error) {
 		trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack()) 
@@ -25,8 +26,11 @@ http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusIntern
 			 if td == nil{
 				 td = &templateData{}
 			 }
+			 td.CSRFToken = nosurf.Token(r)
+			 
 			 td.CurrentYear = time.Now().Year()
-			 td.Flash = app.session.PopString(r, "flash") 
+			 td.Flash = app.session.PopString(r, "flash")
+			 td.AuthenticatedUser = app.authenticatedUser(r) 
 			 return td
 		 }
 
@@ -46,3 +50,7 @@ http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusIntern
 	buf.WriteTo(w)
 	
 }
+func (app *application) authenticatedUser(r *http.Request) int { 
+	   return app.session.GetInt(r, "userID")
+	 }
+
