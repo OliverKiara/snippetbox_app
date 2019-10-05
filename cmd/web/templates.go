@@ -10,7 +10,7 @@ import(
 	 "alexedwards.net/snippetbox/pkg/models"
 )
 type templateData struct{
-	AuthenticatedUser int
+	AuthenticatedUser *models.User
 	CSRFToken         string
 	CurrentYear int
 	Flash string
@@ -19,8 +19,10 @@ type templateData struct{
 	Snippets []*models.Snippet
 }
 func humanDate(t time.Time)string{
-	return t.Format("02 Jan 2006 at 15:04")
-
+	if t.IsZero(){
+		return ""
+	}
+	return t.UTC().Format("02 Jan 2006 at 15:04")
 }
 var functions = template.FuncMap{
 	"humanDate": humanDate,

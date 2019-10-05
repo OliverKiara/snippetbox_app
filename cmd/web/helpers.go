@@ -6,6 +6,7 @@ import(
 	"net/http"
 	"runtime/debug"
 	"time"
+	"alexedwards.net/snippetbox/pkg/models"
 	"github.com/justinas/nosurf"
 )
 func (app *application) serverError(w http.ResponseWriter, err error) {
@@ -50,7 +51,12 @@ http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusIntern
 	buf.WriteTo(w)
 	
 }
-func (app *application) authenticatedUser(r *http.Request) int { 
-	   return app.session.GetInt(r, "userID")
+func (app *application) authenticatedUser(r *http.Request) *models.User { 
+	  user, ok := r.Context().Value(contextKeyUser).(*models.User)
+	  if !ok {
+       return nil
+	  }
+	  
+	return user
 	 }
 
