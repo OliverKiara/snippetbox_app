@@ -38,9 +38,6 @@ type application struct {
 	}
 
 
-	// snippets      *mysql.SnippetModel
-	// templateCache map[string]*template.Template
-	// users         *mysql.UserModel
 }
 
 func main() {
